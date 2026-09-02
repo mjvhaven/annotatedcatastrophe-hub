@@ -5,7 +5,7 @@ const scriptSrc = `${base}/map/map.js`;
 ---
 
 <Layout title="Hex Map Maker">
-  <div class="relative h-[calc(100vh-8rem)] bg-gray-900 rounded-lg overflow-hidden border border-gray-700">
+  <div id="map-container" class="relative bg-gray-900 rounded-lg overflow-hidden border border-gray-700" style="height: calc(100vh - 8rem); min-height: 500px;">
     <canvas id="hex-canvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
 
     <!-- Top-left toolbar -->
