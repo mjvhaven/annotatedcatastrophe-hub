@@ -2,70 +2,60 @@
 (function() {
   'use strict';
 
-  // ============ CONSTANTS ============
-  const HEX_SIZE = 20; // base radius of a hexagon
+  const HEX_SIZE = 30;
   const DEFAULT_COLORS = ['#7c3aed', '#dc2626', '#059669', '#2563eb', '#ca8a04', '#db2777'];
   const TOKEN_SHAPES = [
-    { id: 'circle', draw: (ctx, x, y, s, c) => { ctx.beginPath(); ctx.arc(x, y, s*0.8, 0, Math.PI*2); ctx.fillStyle = c; ctx.fill(); } },
-    { id: 'square', draw: (ctx, x, y, s, c) => { const r = s*0.7; ctx.fillStyle = c; ctx.fillRect(x-r, y-r, r*2, r*2); } },
-    { id: 'triangle', draw: (ctx, x, y, s, c) => { ctx.beginPath(); ctx.moveTo(x, y-s*0.9); ctx.lineTo(x+s*0.8, y+s*0.6); ctx.lineTo(x-s*0.8, y+s*0.6); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); } },
-    { id: 'diamond', draw: (ctx, x, y, s, c) => { ctx.beginPath(); ctx.moveTo(x, y-s*0.9); ctx.lineTo(x+s*0.7, y); ctx.lineTo(x, y+s*0.9); ctx.lineTo(x-s*0.7, y); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); } },
-    { id: 'star', draw: (ctx, x, y, s, c) => { const pts = 5, inn = s*0.4, out = s*0.9; ctx.beginPath(); for(let i=0;i<pts*2;i++){const r=i%2?inn:out,a=(i*Math.PI/pts)-Math.PI/2;ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));}ctx.closePath();ctx.fillStyle=c;ctx.fill();} },
-    { id: 'x', draw: (ctx, x, y, s, c) => { ctx.strokeStyle=c;ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-s*0.5,y-s*0.5);ctx.lineTo(x+s*0.5,y+s*0.5);ctx.moveTo(x+s*0.5,y-s*0.5);ctx.lineTo(x-s*0.5,y+s*0.5);ctx.stroke(); } },
-    { id: 'cross', draw: (ctx, x, y, s, c) => { ctx.strokeStyle=c;ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y-s*0.6);ctx.lineTo(x,y+s*0.6);ctx.moveTo(x-s*0.6,y);ctx.lineTo(x+s*0.6,y);ctx.stroke(); } },
-    { id: 'heart', draw: (ctx, x, y, s, c) => { ctx.beginPath();const t=s*0.4;ctx.moveTo(x,y+s*0.5);ctx.bezierCurveTo(x-s*0.5,y,y-s*0.8,t,y-s*0.8,-t);ctx.bezierCurveTo(x-s*0.8,-s*0.5,x,y+s*0.1,x,y+s*0.5);ctx.bezierCurveTo(x,y+s*0.1,x+s*0.8,-s*0.5,x+s*0.8,-t);ctx.bezierCurveTo(x+s*0.8,t,x+s*0.5,y,x,y+s*0.5);ctx.fillStyle=c;ctx.fill(); } },
-    { id: 'arrow', draw: (ctx, x, y, s, c) => { ctx.beginPath();ctx.moveTo(x,y-s*0.7);ctx.lineTo(x+s*0.4,y+s*0.2);ctx.lineTo(x+s*0.15,y+s*0.2);ctx.lineTo(x+s*0.15,y+s*0.7);ctx.lineTo(x-s*0.15,y+s*0.7);ctx.lineTo(x-s*0.15,y+s*0.2);ctx.lineTo(x-s*0.4,y+s*0.2);ctx.closePath();ctx.fillStyle=c;ctx.fill(); } },
-    { id: 'trefoil', draw: (ctx, x, y, s, c) => { ctx.fillStyle=c;for(let i=0;i<3;i++){const a=(i*120-90)*Math.PI/180;ctx.beginPath();ctx.arc(x+s*0.45*Math.cos(a),y+s*0.45*Math.sin(a),s*0.35,0,Math.PI*2);ctx.fill();} } },
-    { id: 'quatrefoil', draw: (ctx, x, y, s, c) => { ctx.fillStyle=c;for(let i=0;i<4;i++){const a=(i*90-45)*Math.PI/180;ctx.beginPath();ctx.arc(x+s*0.4*Math.cos(a),y+s*0.4*Math.sin(a),s*0.35,0,Math.PI*2);ctx.fill();} } },
-    { id: 'kite', draw: (ctx, x, y, s, c) => { ctx.beginPath();ctx.moveTo(x,y-s*0.9);ctx.lineTo(x+s*0.5,y);ctx.lineTo(x,y+s*0.3);ctx.lineTo(x-s*0.5,y);ctx.closePath();ctx.fillStyle=c;ctx.fill(); } },
-    { id: 'ring', draw: (ctx, x, y, s, c) => { ctx.strokeStyle=c;ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,s*0.6,0,Math.PI*2);ctx.stroke(); } },
-    { id: 'tick', draw: (ctx, x, y, s, c) => { ctx.strokeStyle=c;ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-s*0.5,y);ctx.lineTo(x-s*0.15,y+s*0.3);ctx.lineTo(x+s*0.5,y-s*0.3);ctx.stroke(); } },
-    { id: 'sixstar', draw: (ctx, x, y, s, c) => { const pts=6,inn=s*0.4,out=s*0.9;ctx.beginPath();for(let i=0;i<pts*2;i++){const r=i%2?inn:out,a=(i*Math.PI/pts)-Math.PI/2;ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));}ctx.closePath();ctx.fillStyle=c;ctx.fill(); } }
+    { id: 'circle', draw: function(ctx, x, y, s, c) { ctx.beginPath(); ctx.arc(x, y, s*0.8, 0, Math.PI*2); ctx.fillStyle = c; ctx.fill(); } },
+    { id: 'square', draw: function(ctx, x, y, s, c) { var r = s*0.7; ctx.fillStyle = c; ctx.fillRect(x-r, y-r, r*2, r*2); } },
+    { id: 'triangle', draw: function(ctx, x, y, s, c) { ctx.beginPath(); ctx.moveTo(x, y-s*0.9); ctx.lineTo(x+s*0.8, y+s*0.6); ctx.lineTo(x-s*0.8, y+s*0.6); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); } },
+    { id: 'diamond', draw: function(ctx, x, y, s, c) { ctx.beginPath(); ctx.moveTo(x, y-s*0.9); ctx.lineTo(x+s*0.7, y); ctx.lineTo(x, y+s*0.9); ctx.lineTo(x-s*0.7, y); ctx.closePath(); ctx.fillStyle = c; ctx.fill(); } },
+    { id: 'star', draw: function(ctx, x, y, s, c) { var pts=5,inn=s*0.4,out=s*0.9;ctx.beginPath();for(var i=0;i<pts*2;i++){var r=i%2?inn:out,a=(i*Math.PI/pts)-Math.PI/2;ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));}ctx.closePath();ctx.fillStyle=c;ctx.fill();} },
+    { id: 'x', draw: function(ctx, x, y, s, c) { ctx.strokeStyle=c;ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-s*0.5,y-s*0.5);ctx.lineTo(x+s*0.5,y+s*0.5);ctx.moveTo(x+s*0.5,y-s*0.5);ctx.lineTo(x-s*0.5,y+s*0.5);ctx.stroke(); } },
+    { id: 'cross', draw: function(ctx, x, y, s, c) { ctx.strokeStyle=c;ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y-s*0.6);ctx.lineTo(x,y+s*0.6);ctx.moveTo(x-s*0.6,y);ctx.lineTo(x+s*0.6,y);ctx.stroke(); } },
+    { id: 'heart', draw: function(ctx, x, y, s, c) { ctx.beginPath();var t=s*0.4;ctx.moveTo(x,y+s*0.5);ctx.bezierCurveTo(x-s*0.5,y,x-s*0.8,t,x-s*0.8,-t);ctx.bezierCurveTo(x-s*0.8,-s*0.5,x,y+s*0.1,x,y+s*0.5);ctx.bezierCurveTo(x,y+s*0.1,x+s*0.8,-s*0.5,x+s*0.8,-t);ctx.bezierCurveTo(x+s*0.8,t,x+s*0.5,y,x,y+s*0.5);ctx.fillStyle=c;ctx.fill(); } },
+    { id: 'arrow', draw: function(ctx, x, y, s, c) { ctx.beginPath();ctx.moveTo(x,y-s*0.7);ctx.lineTo(x+s*0.4,y+s*0.2);ctx.lineTo(x+s*0.15,y+s*0.2);ctx.lineTo(x+s*0.15,y+s*0.7);ctx.lineTo(x-s*0.15,y+s*0.7);ctx.lineTo(x-s*0.15,y+s*0.2);ctx.lineTo(x-s*0.4,y+s*0.2);ctx.closePath();ctx.fillStyle=c;ctx.fill(); } },
+    { id: 'trefoil', draw: function(ctx, x, y, s, c) { ctx.fillStyle=c;for(var i=0;i<3;i++){var a=(i*120-90)*Math.PI/180;ctx.beginPath();ctx.arc(x+s*0.45*Math.cos(a),y+s*0.45*Math.sin(a),s*0.35,0,Math.PI*2);ctx.fill();} } },
+    { id: 'quatrefoil', draw: function(ctx, x, y, s, c) { ctx.fillStyle=c;for(var i=0;i<4;i++){var a=(i*90-45)*Math.PI/180;ctx.beginPath();ctx.arc(x+s*0.4*Math.cos(a),y+s*0.4*Math.sin(a),s*0.35,0,Math.PI*2);ctx.fill();} } },
+    { id: 'kite', draw: function(ctx, x, y, s, c) { ctx.beginPath();ctx.moveTo(x,y-s*0.9);ctx.lineTo(x+s*0.5,y);ctx.lineTo(x,y+s*0.3);ctx.lineTo(x-s*0.5,y);ctx.closePath();ctx.fillStyle=c;ctx.fill(); } },
+    { id: 'ring', draw: function(ctx, x, y, s, c) { ctx.strokeStyle=c;ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,s*0.6,0,Math.PI*2);ctx.stroke(); } },
+    { id: 'tick', draw: function(ctx, x, y, s, c) { ctx.strokeStyle=c;ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-s*0.5,y);ctx.lineTo(x-s*0.15,y+s*0.3);ctx.lineTo(x+s*0.5,y-s*0.3);ctx.stroke(); } },
+    { id: 'sixstar', draw: function(ctx, x, y, s, c) { var pts=6,inn=s*0.4,out=s*0.9;ctx.beginPath();for(var i=0;i<pts*2;i++){var r=i%2?inn:out,a=(i*Math.PI/pts)-Math.PI/2;ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));}ctx.closePath();ctx.fillStyle=c;ctx.fill(); } }
   ];
 
-  // ============ STATE ============
-  const state = {
+  var state = {
     canvas: null, ctx: null,
     hexes: new Map(), dots: [], lines: [], tokens: [],
     currentTool: 'paint', currentColor: '#7c3aed', currentShape: TOKEN_SHAPES[0],
     lineStartHex: null, lineStyle: 'solid',
-    recentColors: [...DEFAULT_COLORS], pinnedColors: [],
+    recentColors: DEFAULT_COLORS.slice(), pinnedColors: [],
     zoom: 1, panX: 0, panY: 0,
     isDragging: false, dragStart: { x: 0, y: 0 },
-    isMouseDown: false, hoveredHex: null,
-    selectedToken: null, draggingToken: null,
-    showTokenPalette: false
+    isMouseDown: false, hoveredHex: null
   };
 
-  // ============ HEX MATH ============
   function hexToPixel(q, r) {
-    const x = HEX_SIZE * (3/2 * q);
-    const y = HEX_SIZE * (Math.sqrt(3)/2 * q + Math.sqrt(3) * r);
-    return { x, y };
+    return { x: HEX_SIZE * (3/2 * q), y: HEX_SIZE * (Math.sqrt(3)/2 * q + Math.sqrt(3) * r) };
   }
 
   function pixelToHex(px, py) {
-    const q = (2/3 * px) / HEX_SIZE;
-    const r = (-1/3 * px + Math.sqrt(3)/3 * py) / HEX_SIZE;
+    var q = (2/3 * px) / HEX_SIZE;
+    var r = (-1/3 * px + Math.sqrt(3)/3 * py) / HEX_SIZE;
     return hexRound(q, r);
   }
 
   function hexRound(q, r) {
-    const s = -q - r;
-    let rq = Math.round(q), rr = Math.round(r), rs = Math.round(s);
-    const qDiff = Math.abs(rq - q), rDiff = Math.abs(rr - r), sDiff = Math.abs(rs - s);
+    var s = -q - r;
+    var rq = Math.round(q), rr = Math.round(r), rs = Math.round(s);
+    var qDiff = Math.abs(rq - q), rDiff = Math.abs(rr - r), sDiff = Math.abs(rs - s);
     if (qDiff > rDiff && qDiff > sDiff) rq = -rr - rs;
     else if (rDiff > sDiff) rr = -rq - rs;
     return { q: rq, r: rr };
   }
 
-  function hexKey(q, r) { return `${q},${r}`; }
+  function hexKey(q, r) { return q+','+r; }
 
   function getHexNeighbors(q, r) {
-    return [
-      {q:q+1,r:r},{q:q-1,r:r},{q:q,r+1},{q:q,r-1},
-      {q:q+1,r:r-1},{q:q-1,r:r+1}
-    ];
+    return [{q:q+1,r:r},{q:q-1,r:r},{q:q,r+1},{q:q,r-1},{q:q+1,r:r-1},{q:q-1,r:r+1}];
   }
 
   function hexDistance(a, b) {
@@ -73,111 +63,50 @@
   }
 
   function getHexLinePath(start, end) {
-    const line = [];
-    let current = { q: start.q, r: start.r };
-    const target = { q: end.q, r: end.r };
-    const N = getHexNeighbors;
-    let attempts = 0;
-    while (current.q !== target.q || current.r !== target.r.r || attempts++ < 100) {
-      const neighbors = N(current.q, current.r).sort((a, b) => {
-        const da = hexDistance(a, target), db = hexDistance(b, target);
-        return da - db;
-      });
-      const next = neighbors[0];
+    var line = [];
+    var current = { q: start.q, r: start.r };
+    var target = { q: end.q, r: end.r };
+    var attempts = 0;
+    while ((current.q !== target.q || current.r !== target.r) && attempts++ < 200) {
+      var neighbors = getHexNeighbors(current.q, current.r);
+      neighbors.sort(function(a, b) { return hexDistance(a, target) - hexDistance(b, target); });
       line.push({ q: current.q, r: current.r });
-      current = next;
-      if (current.q === target.q && current.r === target.r) break;
+      current = neighbors[0];
     }
-    line.push(target);
+    line.push({ q: target.q, r: target.r });
     return line;
   }
 
-  function drawHexPath(ctx, hexes, color, style = 'solid') {
-    if (hexes.length < 2) return;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 4;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    if (style === 'dashed') ctx.setLineDash([8, 6]);
-    else if (style === 'dotted') ctx.setLineDash([3, 5]);
-    else ctx.setLineDash([]);
-    ctx.beginPath();
-    for (let i = 0; i < hexes.length; i++) {
-      const h1 = hexes[i];
-      const corners = getHexCorners(h1.q, h1.r);
-      const h2 = hexes[i+1];
-      if (h2) {
-        const n1 = getHexNeighbors(h1.q, h1.r);
-        const n2 = getHexNeighbors(h2.q, h2.r);
-        const shared = n1.filter(n => n2.some(nb => nb.q === n.q && nb.r === n.r));
-        if (shared.length >= 1) {
-          const edge = shared[0];
-          const startCorner = corners.findIndex((c, ci) => {
-            const prev = corners[(ci+5)%6], next = corners[(ci+1)%6];
-            return (prev.x < c.x && next.x < c.x) || (prev.y < c.y && next.y < c.y) ||
-                   (prev.x > c.x && next.x > c.x) || (prev.y > c.y && next.y > c.y);
-          });
-          ctx.moveTo(corners[0].x, corners[0].y);
-          corners.forEach(c => ctx.lineTo(c.x, c.y));
-        }
-      }
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-  }
-
-  function getHexCorners(q, r) {
-    const center = hexToPixel(q, r);
-    const corners = [];
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI / 180) * (60 * i - 30);
-      corners.push({
-        x: center.x + HEX_SIZE * Math.cos(angle),
-        y: center.y + HEX_SIZE * Math.sin(angle)
-      });
-    }
-    return corners;
-  }
-
-  // ============ RENDERING ============
   function render() {
-    const { ctx, canvas, zoom, panX, panY } = state;
+    var ctx = state.ctx, canvas = state.canvas, zoom = state.zoom, panX = state.panX, panY = state.panY;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.translate(canvas.width/2 + panX, canvas.height/2 + panY);
     ctx.scale(zoom, zoom);
 
-    // Draw grid
-    const bounds = getVisibleBounds();
-    for (let q = bounds.minQ; q <= bounds.maxQ; q++) {
-      for (let r = bounds.minR; r <= bounds.maxR; r++) {
+    var bounds = getVisibleBounds();
+    for (var q = bounds.minQ; q <= bounds.maxQ; q++) {
+      for (var r = bounds.minR; r <= bounds.maxR; r++) {
         drawHex(q, r);
       }
     }
 
-    // Draw lines
-    state.lines.forEach(line => {
-      const hexes = getHexLinePath(line.start, line.end);
+    state.lines.forEach(function(line) {
+      var hexes = getHexLinePath(line.start, line.end);
       drawHexLine(hexes, line.color, line.style);
     });
 
-    // Draw dots
-    state.dots.forEach(dot => {
-      drawDot(dot);
-    });
+    state.dots.forEach(function(dot) { drawDot(dot); });
+    state.tokens.forEach(function(token) { drawToken(token); });
 
-    // Draw tokens
-    state.tokens.forEach(token => {
-      drawToken(token);
-    });
-
-    // Draw hover highlight
-    if (state.hoveredHex && state.currentTool !== 'token') {
-      const { q, r } = state.hoveredHex;
+    if (state.hoveredHex) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
       ctx.lineWidth = 2;
-      drawHexShape(q, r);
+      drawHexOutline(state.hoveredHex.q, state.hoveredHex.r);
+      ctx.stroke();
       ctx.restore();
     }
 
@@ -185,66 +114,56 @@
   }
 
   function getVisibleBounds() {
-    const { canvas, zoom } = state;
-    const halfW = canvas.width/2/zoom + 100;
-    const halfH = canvas.height/2/zoom + 100;
-    const topLeft = pixelToHex(-halfW, -halfH);
-    const bottomRight = pixelToHex(halfW, halfH);
+    var canvas = state.canvas, zoom = state.zoom;
+    var halfW = canvas.width/2/Math.abs(zoom) + HEX_SIZE * 3;
+    var halfH = canvas.height/2/Math.abs(zoom) + HEX_SIZE * 3;
+    var topLeft = pixelToHex(-halfW, -halfH);
+    var bottomRight = pixelToHex(halfW, halfH);
     return { minQ: topLeft.q-1, maxQ: bottomRight.q+1, minR: topLeft.r-1, maxR: bottomRight.r+1 };
   }
 
   function drawHex(q, r) {
-    const { ctx } = state;
-    const key = hexKey(q, r);
-    const hex = state.hexes.get(key);
-    ctx.save();
-    ctx.beginPath();
-    drawHexShape(q, r);
+    var ctx = state.ctx;
+    var key = hexKey(q, r);
+    var hex = state.hexes.get(key);
+    drawHexOutline(q, r);
     if (hex && hex.color) {
       ctx.fillStyle = hex.color;
       ctx.fill();
-      if (hex.label) {
-        const center = hexToPixel(q, r);
-        ctx.fillStyle = '#fff';
-        ctx.font = '10px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(hex.label, center.x, center.y);
-      }
     }
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
     ctx.lineWidth = 1;
     ctx.stroke();
-    ctx.restore();
   }
 
-  function drawHexShape(q, r) {
-    const { ctx } = state;
-    const center = hexToPixel(q, r);
-    ctx.moveTo(center.x + HEX_SIZE * Math.cos((Math.PI/180) * -30), center.y + HEX_SIZE * Math.sin((Math.PI/180) * -30));
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI/180) * (60*i - 30);
+  function drawHexOutline(q, r) {
+    var ctx = state.ctx;
+    var center = hexToPixel(q, r);
+    ctx.beginPath();
+    ctx.moveTo(center.x + HEX_SIZE * Math.cos(-Math.PI/6), center.y + HEX_SIZE * Math.sin(-Math.PI/6));
+    for (var i = 1; i <= 6; i++) {
+      var angle = -Math.PI/6 + (Math.PI/3) * i;
       ctx.lineTo(center.x + HEX_SIZE * Math.cos(angle), center.y + HEX_SIZE * Math.sin(angle));
     }
     ctx.closePath();
   }
 
   function drawHexLine(hexes, color, style) {
-    const { ctx } = state;
-    if (hexes.length < 2) return;
+    var ctx = state.ctx;
+    if (hexes.length < 1) return;
     ctx.save();
     ctx.strokeStyle = color;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    if (style === 'dashed') ctx.setLineDash([8, 6]);
-    else if (style === 'dotted') ctx.setLineDash([3, 5]);
+    if (style === 'dashed') ctx.setLineDash([10, 8]);
+    else if (style === 'dotted') ctx.setLineDash([4, 6]);
     else ctx.setLineDash([]);
     ctx.beginPath();
-    const start = hexToPixel(hexes[0].q, hexes[0].r);
+    var start = hexToPixel(hexes[0].q, hexes[0].r);
     ctx.moveTo(start.x, start.y);
-    for (let i = 1; i < hexes.length; i++) {
-      const p = hexToPixel(hexes[i].q, hexes[i].r);
+    for (var i = 1; i < hexes.length; i++) {
+      var p = hexToPixel(hexes[i].q, hexes[i].r);
       ctx.lineTo(p.x, p.y);
     }
     ctx.stroke();
@@ -253,11 +172,11 @@
   }
 
   function drawDot(dot) {
-    const { ctx } = state;
-    const pos = hexToPixel(dot.q, dot.r);
+    var ctx = state.ctx;
+    var pos = hexToPixel(dot.q, dot.r);
     ctx.save();
     ctx.beginPath();
-    ctx.arc(pos.x, pos.y, 6, 0, Math.PI*2);
+    ctx.arc(pos.x, pos.y, 7, 0, Math.PI*2);
     ctx.fillStyle = dot.color || '#ff6b6b';
     ctx.fill();
     ctx.strokeStyle = '#fff';
@@ -267,53 +186,45 @@
   }
 
   function drawToken(token) {
-    const { ctx } = state;
-    const shape = TOKEN_SHAPES.find(s => s.id === token.shape) || TOKEN_SHAPES[0];
+    var ctx = state.ctx;
+    var shape = TOKEN_SHAPES.find(function(s) { return s.id === token.shape; }) || TOKEN_SHAPES[0];
     ctx.save();
     ctx.translate(token.x, token.y);
-    shape.draw(ctx, 0, 0, 18, token.color || '#7c3aed');
+    shape.draw(ctx, 0, 0, 20, token.color || '#7c3aed');
     if (token.label) {
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 10px sans-serif';
+      ctx.font = 'bold 11px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      ctx.fillText(token.label, 0, -22);
+      ctx.fillText(token.label, 0, -24);
     }
     ctx.restore();
   }
 
-  // ============ INTERACTION ============
   function screenToWorld(screenX, screenY) {
-    const { canvas, zoom, panX, panY } = state;
-    return {
-      x: (screenX - canvas.width/2 - panX) / zoom,
-      y: (screenY - canvas.height/2 - panY) / zoom
-    };
-  }
-
-  function getHexAtScreen(screenX, screenY) {
-    const world = screenToWorld(screenX, screenY);
-    return pixelToHex(world.x, world.y);
+    var canvas = state.canvas, zoom = state.zoom, panX = state.panX, panY = state.panY;
+    return { x: (screenX - canvas.width/2 - panX) / zoom, y: (screenY - canvas.height/2 - panY) / zoom };
   }
 
   function handleMouseDown(e) {
-    const rect = state.canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const world = screenToWorld(x, y);
-    const hex = pixelToHex(world.x, world.y);
+    var rect = state.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var world = screenToWorld(x, y);
+    var hex = pixelToHex(world.x, world.y);
 
     if (e.button === 2 || e.ctrlKey) {
-      // Right click / Ctrl+click for context menu on dots
-      showDotPopup(hex, e.clientX, e.clientY);
+      showContextMenu(hex, e.clientX, e.clientY);
       return;
     }
 
     state.isMouseDown = true;
-    state.dragStart = { x, y };
+    state.dragStart = { x: x, y: y };
 
-    if (state.currentTool === 'paint' || state.currentTool === 'erase') {
+    if (state.currentTool === 'paint') {
       applyHexAction(hex);
+    } else if (state.currentTool === 'erase') {
+      eraseHex(hex);
     } else if (state.currentTool === 'line') {
       if (!state.lineStartHex) {
         state.lineStartHex = hex;
@@ -323,38 +234,38 @@
         render();
       }
     } else if (state.currentTool === 'token') {
-      const token = { x: world.x, y: world.y, shape: state.currentShape.id, color: state.currentColor, label: '', text: '' };
+      var token = { x: world.x, y: world.y, shape: state.currentShape.id, color: state.currentColor, label: '', text: '' };
       state.tokens.push(token);
       render();
     } else if (state.currentTool === 'dot') {
-      const existing = state.dots.findIndex(d => d.q === hex.q && d.r === hex.r);
+      var existing = state.dots.findIndex(function(d) { return d.q === hex.q && d.r === hex.r; });
       if (existing >= 0) {
-        showDotPopup(hex, e.clientX, e.clientY);
+        showDotPopup(state.dots[existing], e.clientX, e.clientY);
       } else {
         state.dots.push({ q: hex.q, r: hex.r, color: state.currentColor, title: '', text: '' });
         render();
       }
-    } else {
+    } else if (state.currentTool === 'pan') {
       state.isDragging = true;
-      state.dragStartWorld = { x: world.x, y: world.y };
     }
   }
 
   function handleMouseMove(e) {
-    const rect = state.canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const world = screenToWorld(x, y);
-    const hex = pixelToHex(world.x, world.y);
+    var rect = state.canvas.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    var world = screenToWorld(x, y);
+    var hex = pixelToHex(world.x, world.y);
     state.hoveredHex = hex;
 
-    if (state.isDragging && state.currentTool === 'pan') {
+    if (state.isDragging) {
       state.panX += x - state.dragStart.x;
       state.panY += y - state.dragStart.y;
-      state.dragStart = { x, y };
-      render();
-    } else if (state.isMouseDown && (state.currentTool === 'paint' || state.currentTool === 'erase')) {
+      state.dragStart = { x: x, y: y };
+    } else if (state.isMouseDown && state.currentTool === 'paint') {
       applyHexAction(hex);
+    } else if (state.isMouseDown && state.currentTool === 'erase') {
+      eraseHex(hex);
     }
     render();
   }
@@ -366,93 +277,124 @@
 
   function handleWheel(e) {
     e.preventDefault();
-    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+    var zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
     state.zoom = Math.max(0.1, Math.min(10, state.zoom * zoomFactor));
-    document.getElementById('zoom-level').textContent = Math.round(state.zoom * 100) + '%';
+    var zl = document.getElementById('zoom-level');
+    if (zl) zl.textContent = Math.round(state.zoom * 100) + '%';
     render();
-  }
-
-  function handleContextMenu(e) {
-    e.preventDefault();
   }
 
   function applyHexAction(hex) {
-    const key = hexKey(hex.q, hex.r);
-    if (state.currentTool === 'erase') {
-      state.hexes.delete(key);
-    } else {
-      state.hexes.set(key, { color: state.currentColor });
-    }
+    state.hexes.set(hexKey(hex.q, hex.r), { color: state.currentColor });
     render();
   }
 
-  function showDotPopup(hex, screenX, screenY) {
-    const dot = state.dots.find(d => d.q === hex.q && d.r === hex.r);
-    if (!dot) return;
-    const existing = document.getElementById('dot-popup');
+  function eraseHex(hex) {
+    state.hexes.delete(hexKey(hex.q, hex.r));
+    state.dots = state.dots.filter(function(d) { return !(d.q === hex.q && d.r === hex.r); });
+    state.lines = state.lines.filter(function(l) {
+      return !(l.start.q === hex.q && l.start.r === hex.r) && !(l.end.q === hex.q && l.end.r === hex.r);
+    });
+    render();
+  }
+
+  function showContextMenu(hex, screenX, screenY) {
+    var dot = state.dots.find(function(d) { return d.q === hex.q && d.r === hex.r; });
+    var token = null;
+    for (var i = 0; i < state.tokens.length; i++) {
+      var t = state.tokens[i];
+      var pos = hexToPixel(hex.q, hex.r);
+      if (Math.abs(t.x - pos.x) < HEX_SIZE && Math.abs(t.y - pos.y) < HEX_SIZE) {
+        token = t; break;
+      }
+    }
+    if (dot) showDotPopup(dot, screenX, screenY);
+    else if (token) showTokenPopup(token, screenX, screenY);
+  }
+
+  function showDotPopup(dot, screenX, screenY) {
+    var existing = document.getElementById('dot-popup');
     if (existing) existing.remove();
-    const popup = document.createElement('div');
+    var popup = document.createElement('div');
     popup.id = 'dot-popup';
     popup.className = 'fixed bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-xl z-50 text-sm';
-    popup.style.left = screenX + 'px';
-    popup.style.top = screenY + 'px';
-    popup.innerHTML = `
-      <div class="space-y-2">
-        <input type="text" placeholder="Title" value="${dot.title || ''}" id="dot-title" class="w-40 px-2 py-1 bg-gray-700 border border-gray-600 rounded" />
-        <textarea placeholder="Description" id="dot-text" class="w-40 px-2 py-1 bg-gray-700 border border-gray-600 rounded h-16">${dot.text || ''}</textarea>
-        <div class="flex gap-2">
-          <button id="save-dot" class="px-2 py-1 bg-purple-600 rounded hover:bg-purple-700">Save</button>
-          <button id="delete-dot" class="px-2 py-1 bg-red-600 rounded hover:bg-red-700">Delete</button>
-          <button id="close-popup" class="px-2 py-1 bg-gray-600 rounded hover:bg-gray-500">X</button>
-        </div>
-      </div>
-    `;
+    popup.style.left = Math.min(screenX, window.innerWidth - 270) + 'px';
+    popup.style.top = Math.min(screenY, window.innerHeight - 220) + 'px';
+    popup.innerHTML = '<div class="space-y-2"><div class="text-gray-400 text-xs">Dot Title</div><input type="text" placeholder="Title" value="' + (dot.title || '').replace(/"/g, '&quot;') + '" id="dot-title" class="w-56 px-2 py-1 bg-gray-700 border border-gray-600 rounded" /><div class="text-gray-400 text-xs">Description</div><textarea placeholder="Description" id="dot-text" class="w-56 px-2 py-1 bg-gray-700 border border-gray-600 rounded h-20">' + (dot.text || '') + '</textarea><div class="flex gap-2 mt-2"><button id="save-dot" class="px-3 py-1 bg-purple-600 rounded hover:bg-purple-700">Save</button><button id="delete-dot" class="px-3 py-1 bg-red-600 rounded hover:bg-red-700">Delete</button><button id="close-popup" class="px-2 py-1 bg-gray-600 rounded hover:bg-gray-500">X</button></div></div>';
     document.body.appendChild(popup);
-    document.getElementById('save-dot').onclick = () => {
+    document.getElementById('save-dot').onclick = function() {
       dot.title = document.getElementById('dot-title').value;
       dot.text = document.getElementById('dot-text').value;
       popup.remove();
       render();
     };
-    document.getElementById('delete-dot').onclick = () => {
-      state.dots = state.dots.filter(d => !(d.q === hex.q && d.r === hex.r));
+    document.getElementById('delete-dot').onclick = function() {
+      state.dots = state.dots.filter(function(d) { return !(d.q === dot.q && d.r === dot.r); });
       popup.remove();
       render();
     };
-    document.getElementById('close-popup').onclick = () => popup.remove();
+    document.getElementById('close-popup').onclick = function() { popup.remove(); };
   }
 
-  // ============ COLOR MANAGEMENT ============
+  function showTokenPopup(token, screenX, screenY) {
+    var existing = document.getElementById('dot-popup');
+    if (existing) existing.remove();
+    var popup = document.createElement('div');
+    popup.id = 'dot-popup';
+    popup.className = 'fixed bg-gray-800 border border-gray-600 rounded-lg p-3 shadow-xl z-50 text-sm';
+    popup.style.left = Math.min(screenX, window.innerWidth - 270) + 'px';
+    popup.style.top = Math.min(screenY, window.innerHeight - 220) + 'px';
+    popup.innerHTML = '<div class="space-y-2"><div class="text-gray-400 text-xs">Token Label</div><input type="text" placeholder="Token Label" value="' + (token.label || '').replace(/"/g, '&quot;') + '" id="token-label" class="w-56 px-2 py-1 bg-gray-700 border border-gray-600 rounded" /><div class="text-gray-400 text-xs">Token Description</div><textarea placeholder="Description" id="token-text" class="w-56 px-2 py-1 bg-gray-700 border border-gray-600 rounded h-20">' + (token.text || '') + '</textarea><div class="flex gap-2 mt-2"><button id="save-token" class="px-3 py-1 bg-purple-600 rounded hover:bg-purple-700">Save</button><button id="delete-token" class="px-3 py-1 bg-red-600 rounded hover:bg-red-700">Delete</button><button id="close-popup" class="px-2 py-1 bg-gray-600 rounded hover:bg-gray-500">X</button></div></div>';
+    document.body.appendChild(popup);
+    document.getElementById('save-token').onclick = function() {
+      token.label = document.getElementById('token-label').value;
+      token.text = document.getElementById('token-text').value;
+      popup.remove();
+      render();
+    };
+    document.getElementById('delete-token').onclick = function() {
+      state.tokens = state.tokens.filter(function(t) { return t !== token; });
+      popup.remove();
+      render();
+    };
+    document.getElementById('close-popup').onclick = function() { popup.remove(); };
+  }
+
   function addRecentColor(color) {
-    state.recentColors = [color, ...state.recentColors.filter(c => c !== color)].slice(0, 6);
+    state.recentColors = [color].concat(state.recentColors.filter(function(c) { return c !== color; })).slice(0, 6);
     renderColorPalette();
   }
 
   function renderColorPalette() {
-    const recentEl = document.getElementById('recent-colors');
-    const pinnedEl = document.getElementById('pinned-colors');
-    recentEl.innerHTML = state.recentColors.map(c => `<button class="color-swatch w-8 h-8 rounded border-2 border-gray-600 hover:border-white transition" style="background:${c}" data-color="${c}"></button>`).join('');
-    pinnedEl.innerHTML = state.pinnedColors.map((c, i) => `<button class="color-swatch w-8 h-8 rounded border-2 border-gray-600 hover:border-white transition" style="background:${c}" data-color="${c}" data-pinned="${i}"></button>`).join('');
-    document.querySelectorAll('.color-swatch').forEach(btn => {
-      btn.addEventListener('click', () => {
+    var recentEl = document.getElementById('recent-colors');
+    var pinnedEl = document.getElementById('pinned-colors');
+    if (!recentEl || !pinnedEl) return;
+    recentEl.innerHTML = state.recentColors.map(function(c) {
+      return '<button class="color-swatch w-9 h-9 rounded border-2 border-gray-600 hover:border-white transition cursor-pointer" style="background:' + c + '" data-color="' + c + '"></button>';
+    }).join('');
+    pinnedEl.innerHTML = state.pinnedColors.map(function(c, i) {
+      return '<button class="color-swatch w-9 h-9 rounded border-2 border-gray-600 hover:border-white transition cursor-pointer" style="background:' + c + '" data-color="' + c + '" data-pinned="' + i + '"></button>';
+    }).join('');
+    document.querySelectorAll('.color-swatch').forEach(function(btn) {
+      btn.onclick = function() {
         state.currentColor = btn.dataset.color;
-        document.getElementById('rgb-picker').value = btn.dataset.color;
-      });
+        var rp = document.getElementById('rgb-picker');
+        if (rp) rp.value = btn.dataset.color;
+      };
     });
   }
 
-  // ============ SAVE/LOAD/SHARE ============
   function saveToLocal() {
-    const data = { hexes: [...state.hexes], dots: state.dots, lines: state.lines, tokens: state.tokens };
+    var data = { hexes: Array.from(state.hexes), dots: state.dots, lines: state.lines, tokens: state.tokens };
     localStorage.setItem('hexmap', JSON.stringify(data));
-    alert('Map saved locally!');
+    alert('Map saved!');
   }
 
   function loadFromLocal() {
-    const raw = localStorage.getItem('hexmap');
+    var raw = localStorage.getItem('hexmap');
     if (!raw) { alert('No saved map found.'); return; }
     try {
-      const data = JSON.parse(raw);
+      var data = JSON.parse(raw);
       state.hexes = new Map(data.hexes);
       state.dots = data.dots || [];
       state.lines = data.lines || [];
@@ -462,25 +404,27 @@
   }
 
   function shareMap() {
-    const data = { h: [...state.hexes], d: state.dots, l: state.lines, t: state.tokens };
-    const encoded = btoa(JSON.stringify(data));
-    const url = window.location.origin + window.location.pathname + '?map=' + encoded;
-    document.getElementById('share-url').value = url;
-    document.getElementById('share-modal').classList.remove('hidden');
-    document.getElementById('url-length-warning').classList.toggle('hidden', url.length < 1500);
+    var data = { h: Array.from(state.hexes), d: state.dots, l: state.lines, t: state.tokens };
+    var encoded = btoa(JSON.stringify(data));
+    var url = window.location.origin + window.location.pathname + '?map=' + encoded;
+    var su = document.getElementById('share-url');
+    if (su) su.value = url;
+    var sm = document.getElementById('share-modal');
+    if (sm) sm.classList.remove('hidden');
+    var warn = document.getElementById('url-length-warning');
+    if (warn) warn.classList.toggle('hidden', url.length < 1500);
   }
 
   function loadFromURL() {
-    const params = new URLSearchParams(window.location.search);
-    const encoded = params.get('map');
+    var params = new URLSearchParams(window.location.search);
+    var encoded = params.get('map');
     if (!encoded) return;
     try {
-      const data = JSON.parse(atob(encoded));
+      var data = JSON.parse(atob(encoded));
       state.hexes = new Map(data.h);
       state.dots = data.d || [];
       state.lines = data.l || [];
       state.tokens = data.t || [];
-      render();
     } catch(e) { console.error('Error loading URL map:', e); }
   }
 
@@ -494,105 +438,119 @@
     }
   }
 
-  // ============ INIT ============
   function init() {
     state.canvas = document.getElementById('hex-canvas');
+    if (!state.canvas) return;
     state.ctx = state.canvas.getContext('2d');
 
     function resize() {
-      state.canvas.width = state.canvas.offsetWidth;
-      state.canvas.height = state.canvas.offsetHeight;
+      var container = state.canvas.parentElement;
+      state.canvas.width = container.offsetWidth;
+      state.canvas.height = container.offsetHeight;
       render();
     }
     resize();
     window.addEventListener('resize', resize);
 
-    // Mouse events
     state.canvas.addEventListener('mousedown', handleMouseDown);
     state.canvas.addEventListener('mousemove', handleMouseMove);
     state.canvas.addEventListener('mouseup', handleMouseUp);
     state.canvas.addEventListener('mouseleave', handleMouseUp);
     state.canvas.addEventListener('wheel', handleWheel, { passive: false });
-    state.canvas.addEventListener('contextmenu', handleContextMenu);
+    state.canvas.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 
-    // Touch support
-    state.canvas.addEventListener('touchstart', e => {
+    state.canvas.addEventListener('touchstart', function(e) {
       e.preventDefault();
-      const touch = e.touches[0];
+      var touch = e.touches[0];
       handleMouseDown({ clientX: touch.clientX, clientY: touch.clientY, button: 0, ctrlKey: false });
-    });
-    state.canvas.addEventListener('touchmove', e => {
+    }, { passive: false });
+    state.canvas.addEventListener('touchmove', function(e) {
       e.preventDefault();
-      const touch = e.touches[0];
+      var touch = e.touches[0];
       handleMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
-    });
+    }, { passive: false });
     state.canvas.addEventListener('touchend', handleMouseUp);
 
-    // Tool buttons
-    document.querySelectorAll('.tool-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('bg-purple-600'));
+    document.querySelectorAll('.tool-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tool-btn').forEach(function(b) { b.classList.remove('bg-purple-600'); });
         btn.classList.add('bg-purple-600');
         state.currentTool = btn.dataset.tool;
-        state.showTokenPalette = state.currentTool === 'token';
-        document.getElementById('token-palette').classList.toggle('hidden', !state.showTokenPalette);
+        var tp = document.getElementById('token-palette');
+        if (tp) tp.classList.toggle('hidden', state.currentTool !== 'token');
       });
     });
 
-    // RGB picker
-    const rgbPicker = document.getElementById('rgb-picker');
-    rgbPicker.addEventListener('input', e => {
-      state.currentColor = e.target.value;
-      addRecentColor(e.target.value);
-    });
-    rgbPicker.addEventListener('change', e => {
-      state.currentColor = e.target.value;
-      addRecentColor(e.target.value);
-    });
-
-    // Pin button
-    document.getElementById('pin-btn').addEventListener('click', () => {
-      if (state.pinnedColors.length < 6 && !state.pinnedColors.includes(state.currentColor)) {
-        state.pinnedColors.push(state.currentColor);
-        renderColorPalette();
-      }
-    });
-
-    // Token palette
-    document.getElementById('token-shapes').innerHTML = TOKEN_SHAPES.map(s => `<button class="shape-btn w-10 h-10 bg-gray-700 hover:bg-purple-600 rounded flex items-center justify-center text-lg" data-shape="${s.id}"></button>`).join('');
-    document.querySelectorAll('.shape-btn').forEach((btn, i) => {
-      const shape = TOKEN_SHAPES[i];
-      const miniCanvas = document.createElement('canvas');
-      miniCanvas.width = miniCanvas.height = 24;
-      const miniCtx = miniCanvas.getContext('2d');
-      shape.draw(miniCtx, 12, 12, 10, '#fff');
-      btn.appendChild(miniCanvas);
-      btn.addEventListener('click', () => {
-        state.currentShape = shape;
-        document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('ring-2', 'ring-purple-400'));
-        btn.classList.add('ring-2', 'ring-purple-400');
+    var rgbPicker = document.getElementById('rgb-picker');
+    if (rgbPicker) {
+      rgbPicker.addEventListener('input', function(e) { state.currentColor = e.target.value; });
+      rgbPicker.addEventListener('change', function(e) {
+        state.currentColor = e.target.value;
+        addRecentColor(e.target.value);
       });
-    });
+    }
 
-    // Action buttons
-    document.getElementById('save-btn').addEventListener('click', saveToLocal);
-    document.getElementById('load-btn').addEventListener('click', loadFromLocal);
-    document.getElementById('share-btn').addEventListener('click', shareMap);
-    document.getElementById('clear-btn').addEventListener('click', clearMap);
+    var pinBtn = document.getElementById('pin-btn');
+    if (pinBtn) {
+      pinBtn.addEventListener('click', function() {
+        if (state.pinnedColors.length < 6 && state.pinnedColors.indexOf(state.currentColor) === -1) {
+          state.pinnedColors.push(state.currentColor);
+          renderColorPalette();
+        }
+      });
+    }
 
-    // Share modal
-    document.getElementById('copy-url').addEventListener('click', () => {
-      navigator.clipboard.writeText(document.getElementById('share-url').value);
-      document.getElementById('copy-url').textContent = 'Copied!';
-      setTimeout(() => document.getElementById('copy-url').textContent = 'Copy URL', 1500);
-    });
-    document.getElementById('close-share').addEventListener('click', () => {
-      document.getElementById('share-modal').classList.add('hidden');
-    });
+    var ts = document.getElementById('token-shapes');
+    if (ts) {
+      ts.innerHTML = TOKEN_SHAPES.map(function(s, i) {
+        return '<button class="shape-btn w-10 h-10 bg-gray-700 hover:bg-purple-600 rounded flex items-center justify-center cursor-pointer" data-shape="' + s.id + '"></button>';
+      }).join('');
 
-    // Click outside popup to close
-    document.addEventListener('click', e => {
-      const popup = document.getElementById('dot-popup');
+      document.querySelectorAll('.shape-btn').forEach(function(btn, i) {
+        var shape = TOKEN_SHAPES[i];
+        var miniCanvas = document.createElement('canvas');
+        miniCanvas.width = miniCanvas.height = 24;
+        var miniCtx = miniCanvas.getContext('2d');
+        shape.draw(miniCtx, 12, 12, 10, '#fff');
+        btn.appendChild(miniCanvas);
+        btn.addEventListener('click', function() {
+          state.currentShape = shape;
+          document.querySelectorAll('.shape-btn').forEach(function(b) { b.classList.remove('ring-2', 'ring-purple-400'); });
+          btn.classList.add('ring-2', 'ring-purple-400');
+        });
+      });
+    }
+
+    var sBtn = document.getElementById('save-btn');
+    if (sBtn) sBtn.addEventListener('click', saveToLocal);
+    var lBtn = document.getElementById('load-btn');
+    if (lBtn) lBtn.addEventListener('click', loadFromLocal);
+    var shBtn = document.getElementById('share-btn');
+    if (shBtn) shBtn.addEventListener('click', shareMap);
+    var clBtn = document.getElementById('clear-btn');
+    if (clBtn) clBtn.addEventListener('click', clearMap);
+
+    var cBtn = document.getElementById('copy-url');
+    if (cBtn) {
+      cBtn.addEventListener('click', function() {
+        var su = document.getElementById('share-url');
+        if (su) {
+          navigator.clipboard.writeText(su.value);
+          cBtn.textContent = 'Copied!';
+          setTimeout(function() { cBtn.textContent = 'Copy URL'; }, 1500);
+        }
+      });
+    }
+    var csBtn = document.getElementById('close-share');
+    if (csBtn) {
+      csBtn.addEventListener('click', function() {
+        var sm = document.getElementById('share-modal');
+        if (sm) sm.classList.add('hidden');
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      var popup = document.getElementById('dot-popup');
       if (popup && !popup.contains(e.target) && e.target.id !== 'hex-canvas') {
         popup.remove();
       }
@@ -603,7 +561,6 @@
     render();
   }
 
-  // Start when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
