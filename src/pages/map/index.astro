@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const scriptSrc = `${base}/map/map.js`;
 ---
 
 <Layout title="Hex Map Maker">
@@ -63,5 +65,5 @@ import Layout from '../../layouts/Layout.astro';
     </div>
   </div>
 
-  <script is:inline src="/map/map.js"></script>
+  <script is:inline src={scriptSrc}></script>
 </Layout>
