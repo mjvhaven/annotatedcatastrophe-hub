@@ -4,14 +4,17 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const currentPath = Astro.url.pathname;
+const cleanPath = currentPath.replace(base, '').replace(/^\//, '') || '/';
+const href = (path: string) => `${base}/${path}`.replace(/\/\//g, '/');
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <title>{title} | annotatedcatastrophe</title>
   </head>
   <body class="min-h-screen bg-gray-900 text-gray-100">
@@ -19,23 +22,23 @@ const currentPath = Astro.url.pathname;
       <div class="max-w-7xl mx-auto px-4">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center space-x-8">
-            <a href="/" class="text-xl font-bold text-purple-400 hover:text-purple-300 transition">
+            <a href={base} class="text-xl font-bold text-purple-400 hover:text-purple-300 transition">
               annotatedcatastrophe
             </a>
             <div class="hidden md:flex space-x-1">
-              <a href="/" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+              <a href={href('')} class:list={["px-4 py-2 rounded-lg transition", cleanPath === '/' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
                 Home
               </a>
-              <a href="/map" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/map' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+              <a href={href('map')} class:list={["px-4 py-2 rounded-lg transition", cleanPath === '/map' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
                 Hex Map
               </a>
-              <a href="/messages" class:list={["px-4 py-2 rounded-lg transition", currentPath.startsWith('/messages') ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+              <a href={href('messages')} class:list={["px-4 py-2 rounded-lg transition", cleanPath.startsWith('/messages') ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
                 Messages
               </a>
-              <a href="/blog" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/blog' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+              <a href={href('blog')} class:list={["px-4 py-2 rounded-lg transition", cleanPath === '/blog' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
                 Blog
               </a>
-              <a href="/about" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/about' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+              <a href={href('about')} class:list={["px-4 py-2 rounded-lg transition", cleanPath === '/about' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
                 About
               </a>
             </div>
@@ -48,19 +51,19 @@ const currentPath = Astro.url.pathname;
         </div>
       </div>
       <div class="md:hidden px-4 pb-3 flex space-x-1 overflow-x-auto">
-        <a href="/" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+        <a href={href('')} class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", cleanPath === '/' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
           Home
         </a>
-        <a href="/map" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/map' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+        <a href={href('map')} class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", cleanPath === '/map' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
           Hex Map
         </a>
-        <a href="/messages" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath.startsWith('/messages') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+        <a href={href('messages')} class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", cleanPath.startsWith('/messages') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
           Messages
         </a>
-        <a href="/blog" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/blog' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+        <a href={href('blog')} class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", cleanPath === '/blog' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
           Blog
         </a>
-        <a href="/about" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/about' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+        <a href={href('about')} class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", cleanPath === '/about' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
           About
         </a>
       </div>
