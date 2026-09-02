@@ -439,14 +439,19 @@
   }
 
   function init() {
+    console.log('Hex map init starting...');
     state.canvas = document.getElementById('hex-canvas');
-    if (!state.canvas) return;
+    if (!state.canvas) { console.error('Canvas not found!'); return; }
+    console.log('Canvas found:', state.canvas);
     state.ctx = state.canvas.getContext('2d');
+    console.log('Context:', state.ctx);
 
     function resize() {
       var container = state.canvas.parentElement;
-      state.canvas.width = container.offsetWidth;
-      state.canvas.height = container.offsetHeight;
+      console.log('Container:', container, 'W:', container.offsetWidth, 'H:', container.offsetHeight);
+      state.canvas.width = container.offsetWidth || 800;
+      state.canvas.height = container.offsetHeight || 600;
+      console.log('Canvas size:', state.canvas.width, 'x', state.canvas.height);
       render();
     }
     resize();
