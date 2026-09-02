@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Messages">
+  <div class="max-w-2xl mx-auto text-center py-12">
+    <h1 class="text-4xl font-bold mb-4">Messages</h1>
+    <p class="text-gray-400 mb-8">Private messaging, group chats, and servers.</p>
+    <div id="auth-container" class="bg-gray-800 rounded-xl p-8 border border-gray-700">
+      <div id="login-form" class="space-y-4">
+        <input type="text" id="username" placeholder="Username" class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-purple-500 focus:outline-none text-center" />
+        <input type="password" id="password" placeholder="Password" class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-purple-500 focus:outline-none text-center" />
+        <button id="login-btn" class="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold transition">Sign In</button>
+        <button id="register-btn" class="w-full px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition">Create Account</button>
+        <p id="auth-error" class="text-red-400 text-sm hidden"></p>
+      </div>
+      <div id="chat-container" class="hidden">
+        <div id="user-info" class="mb-4 text-purple-400 font-semibold"></div>
+        <div id="rooms" class="space-y-2 text-left">
+          <button class="room-btn w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-left" data-room="general"># general</button>
+          <button class="room-btn w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-left" data-room="random"># random</button>
+        </div>
+        <button id="logout-btn" class="mt-6 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm transition">Sign Out</button>
+      </div>
+    </div>
+    <p class="text-gray-600 text-sm mt-8">Messages feature coming soon. Requires free account.</p>
+  </div>
+
+  <script>
+    // Placeholder for Supabase auth integration
+    // This will be connected to Supabase when that section is built
+    const loginBtn = document.getElementById('login-btn');
+    const registerBtn = document.getElementById('register-btn');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const errorText = document.getElementById('auth-error');
+    const loginForm = document.getElementById('login-form');
+    const chatContainer = document.getElementById('chat-container');
+
+    loginBtn?.addEventListener('click', () => {
+      errorText.textContent = 'Messages feature not yet connected. Check back soon!';
+      errorText.classList.remove('hidden');
+    });
+
+    registerBtn?.addEventListener('click', () => {
+      errorText.textContent = 'Messages feature not yet connected. Check back soon!';
+      errorText.classList.remove('hidden');
+    });
+  </script>
+</Layout>

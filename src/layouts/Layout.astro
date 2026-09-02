@@ -1,0 +1,77 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} | annotatedcatastrophe</title>
+  </head>
+  <body class="min-h-screen bg-gray-900 text-gray-100">
+    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center space-x-8">
+            <a href="/" class="text-xl font-bold text-purple-400 hover:text-purple-300 transition">
+              annotatedcatastrophe
+            </a>
+            <div class="hidden md:flex space-x-1">
+              <a href="/" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+                Home
+              </a>
+              <a href="/map" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/map' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+                Hex Map
+              </a>
+              <a href="/messages" class:list={["px-4 py-2 rounded-lg transition", currentPath.startsWith('/messages') ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+                Messages
+              </a>
+              <a href="/blog" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/blog' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+                Blog
+              </a>
+              <a href="/about" class:list={["px-4 py-2 rounded-lg transition", currentPath === '/about' ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-700']}>
+                About
+              </a>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div id="auth-section" class="text-sm">
+              <span id="loading-text" class="text-gray-500">...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="md:hidden px-4 pb-3 flex space-x-1 overflow-x-auto">
+        <a href="/" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+          Home
+        </a>
+        <a href="/map" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/map' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+          Hex Map
+        </a>
+        <a href="/messages" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath.startsWith('/messages') ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+          Messages
+        </a>
+        <a href="/blog" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/blog' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+          Blog
+        </a>
+        <a href="/about" class:list={["px-3 py-1.5 rounded-lg text-sm transition whitespace-nowrap", currentPath === '/about' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:bg-gray-700']}>
+          About
+        </a>
+      </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+      <slot />
+    </main>
+
+    <footer class="border-t border-gray-800 mt-12 py-6 text-center text-gray-500 text-sm">
+      <p>&copy; {new Date().getFullYear()} annotatedcatastrophe</p>
+    </footer>
+  </body>
+</html>

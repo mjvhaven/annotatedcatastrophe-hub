@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Home">
+  <div class="max-w-4xl mx-auto">
+    <header class="text-center py-12">
+      <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+        annotatedcatastrophe
+      </h1>
+      <p class="text-xl text-gray-400 mb-2">A hub for creative tools and experiments</p>
+      <p class="text-gray-500">Welcome to my little corner of the internet.</p>
+    </header>
+
+    <section class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      <a href="/map" class="group bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-purple-500 transition">
+        <div class="text-4xl mb-4">⬡</div>
+        <h2 class="text-xl font-semibold mb-2 group-hover:text-purple-400 transition">Hex Map Maker</h2>
+        <p class="text-gray-400 text-sm">Create TTRPG maps with hex grids, tokens, lines, and more. Infinite canvas, shareable by URL.</p>
+      </a>
+
+      <a href="/messages" class="group bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-purple-500 transition">
+        <div class="text-4xl mb-4">💬</div>
+        <h2 class="text-xl font-semibold mb-2 group-hover:text-purple-400 transition">Messages</h2>
+        <p class="text-gray-400 text-sm">Chat with friends in DMs, group chats, or servers. Simple, no email required.</p>
+      </a>
+
+      <a href="/blog" class="group bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-purple-500 transition">
+        <div class="text-4xl mb-4">📝</div>
+        <h2 class="text-xl font-semibold mb-2 group-hover:text-purple-400 transition">Blog</h2>
+        <p class="text-gray-400 text-sm">Thoughts, tutorials, and updates from the chaos.</p>
+      </a>
+
+      <a href="https://mjvhaven.github.io/custom-calendars/" target="_blank" rel="noopener" class="group bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-purple-500 transition">
+        <div class="text-4xl mb-4">📅</div>
+        <h2 class="text-xl font-semibold mb-2 group-hover:text-purple-400 transition">Custom Calendars</h2>
+        <p class="text-gray-400 text-sm">Generate fantasy calendars for your worlds. External link ↗</p>
+      </a>
+
+      <a href="/about" class="group bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-purple-500 transition">
+        <div class="text-4xl mb-4">👤</div>
+        <h2 class="text-xl font-semibold mb-2 group-hover:text-purple-400 transition">About</h2>
+        <p class="text-gray-400 text-sm">Who am I? What's this site about? Find out here.</p>
+      </a>
+    </section>
+  </div>
+</Layout>

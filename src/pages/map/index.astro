@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Hex Map Maker">
+  <div class="relative h-[calc(100vh-8rem)] bg-gray-900 rounded-lg overflow-hidden border border-gray-700">
+    <canvas id="hex-canvas" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
+
+    <!-- Top-left toolbar -->
+    <div class="absolute top-3 left-3 bg-gray-800/90 backdrop-blur p-2 rounded-lg border border-gray-700 space-y-2">
+      <div class="flex flex-col gap-1">
+        <button class="tool-btn px-3 py-2 bg-gray-700 hover:bg-purple-600 rounded text-sm" data-tool="paint" title="Paint hexes (click to apply color)">🖌️ Paint</button>
+        <button class="tool-btn px-3 py-2 bg-gray-700 hover:bg-purple-600 rounded text-sm" data-tool="dot" title="Add a dot (right-click for popup)">📍 Dot</button>
+        <button class="tool-btn px-3 py-2 bg-gray-700 hover:bg-purple-600 rounded text-sm" data-tool="line" title="Draw a line (click two hexes)">📏 Line</button>
+        <button class="tool-btn px-3 py-2 bg-gray-700 hover:bg-purple-600 rounded text-sm" data-tool="token" title="Place a token (click to place, drag to move)">🎭 Token</button>
+        <button class="tool-btn px-3 py-2 bg-gray-700 hover:bg-purple-600 rounded text-sm" data-tool="erase" title="Erase (clears paint/tokens/dots/lines)">🧹 Erase</button>
+      </div>
+    </div>
+
+    <!-- Color palette -->
+    <div class="absolute bottom-3 left-3 bg-gray-800/90 backdrop-blur p-3 rounded-lg border border-gray-700">
+      <div class="text-xs text-gray-400 mb-1">Recent / Default</div>
+      <div id="recent-colors" class="flex gap-1 mb-2"></div>
+      <div class="text-xs text-gray-400 mb-1">Pinned</div>
+      <div id="pinned-colors" class="flex gap-1 mb-2"></div>
+      <div class="flex gap-2 items-center">
+        <input type="color" id="rgb-picker" value="#7c3aed" class="w-8 h-8 rounded cursor-pointer bg-transparent" />
+        <button id="pin-btn" class="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs" title="Pin current color">📌</button>
+      </div>
+    </div>
+
+    <!-- Token palette (shown when token tool is selected) -->
+    <div id="token-palette" class="absolute top-3 right-3 bg-gray-800/90 backdrop-blur p-2 rounded-lg border border-gray-700 hidden">
+      <div class="text-xs text-gray-400 mb-1">Token Shape</div>
+      <div class="grid grid-cols-3 gap-1" id="token-shapes"></div>
+    </div>
+
+    <!-- Top-right: save/share -->
+    <div class="absolute top-3 right-3 flex gap-2" id="top-actions">
+      <button id="save-btn" class="px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm" title="Save to local browser">💾 Save</button>
+      <button id="load-btn" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm" title="Load saved map">📂 Load</button>
+      <button id="share-btn" class="px-3 py-2 bg-pink-600 hover:bg-pink-700 rounded-lg text-sm" title="Get shareable URL">🔗 Share</button>
+      <button id="clear-btn" class="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm" title="Clear everything">🗑️</button>
+    </div>
+
+    <!-- Zoom indicator -->
+    <div class="absolute bottom-3 right-3 bg-gray-800/90 backdrop-blur px-3 py-2 rounded-lg border border-gray-700 text-sm text-gray-300">
+      Zoom: <span id="zoom-level">100%</span> · <span class="text-gray-500">Scroll to zoom, drag to pan</span>
+    </div>
+
+    <!-- Share modal -->
+    <div id="share-modal" class="absolute inset-0 bg-black/70 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 max-w-lg w-full">
+        <h3 class="text-xl font-semibold mb-3">Share this map</h3>
+        <p class="text-sm text-gray-400 mb-3">Copy this URL to share the map. The map data is encoded in the URL — no account or server needed.</p>
+        <textarea id="share-url" readonly class="w-full h-24 bg-gray-900 border border-gray-700 rounded p-2 text-xs font-mono"></textarea>
+        <div class="flex gap-2 mt-3">
+          <button id="copy-url" class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg">Copy URL</button>
+          <button id="close-share" class="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg">Close</button>
+        </div>
+        <p id="url-length-warning" class="text-yellow-400 text-xs mt-2 hidden">⚠️ URL is long. For very large maps, save to cloud (coming soon) will work better.</p>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline src="/map/map.js"></script>
+</Layout>
