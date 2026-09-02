@@ -126,14 +126,26 @@
     var ctx = state.ctx;
     var key = hexKey(q, r);
     var hex = state.hexes.get(key);
-    drawHexOutline(q, r);
+    var pos = hexToPixel(q, r);
+    ctx.save();
+    ctx.translate(pos.x, pos.y);
+    ctx.beginPath();
+    ctx.moveTo(HEX_SIZE * Math.cos(-Math.PI/6), HEX_SIZE * Math.sin(-Math.PI/6));
+    for (var i = 1; i <= 6; i++) {
+      var angle = -Math.PI/6 + (Math.PI/3) * i;
+      ctx.lineTo(HEX_SIZE * Math.cos(angle), HEX_SIZE * Math.sin(angle));
+    }
+    ctx.closePath();
+    ctx.fillStyle = '#374151';
+    ctx.fill();
     if (hex && hex.color) {
       ctx.fillStyle = hex.color;
       ctx.fill();
     }
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
     ctx.lineWidth = 1;
     ctx.stroke();
+    ctx.restore();
   }
 
   function drawHexOutline(q, r) {
@@ -439,19 +451,14 @@
   }
 
   function init() {
-    console.log('Hex map init starting...');
     state.canvas = document.getElementById('hex-canvas');
-    if (!state.canvas) { console.error('Canvas not found!'); return; }
-    console.log('Canvas found:', state.canvas);
+    if (!state.canvas) { console.error('Canvas element not found!'); return; }
     state.ctx = state.canvas.getContext('2d');
-    console.log('Context:', state.ctx);
 
     function resize() {
       var container = state.canvas.parentElement;
-      console.log('Container:', container, 'W:', container.offsetWidth, 'H:', container.offsetHeight);
-      state.canvas.width = container.offsetWidth || 800;
-      state.canvas.height = container.offsetHeight || 600;
-      console.log('Canvas size:', state.canvas.width, 'x', state.canvas.height);
+      state.canvas.width = Math.max(container.offsetWidth, 800);
+      state.canvas.height = Math.max(container.offsetHeight, 500);
       render();
     }
     resize();
